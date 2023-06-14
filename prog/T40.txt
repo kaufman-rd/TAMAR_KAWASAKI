@@ -1,0 +1,30 @@
+
+
+
+
+.PROGRAM tcp_open()
+	tout_open = 60
+	ip[1] = 192
+	ip[2] = 168
+	ip[3] = 0
+	ip[4] = 11
+	port = 10000
+	.er_count = 0
+	connect:
+	TIMER (2) = 0
+	TCP_CONNECT sock_id1,port,ip[1],tout_open
+	IF sock_id1<0 THEN
+		IF .er_count>=5 THEN
+			PRINT "Client Communication with Cognex has failed"
+			GOTO forgetit
+		ELSE
+			.er_count = .er_count+1
+			PRINT "TCP_CONNECT error id = ",sock_id1," error count = ",.er_count
+			GOTO connect
+		END
+	ELSE
+		PRINT "TCP_CONNECT OK id = ",sock_id1," with timep = ",TIMER(2)
+	END
+	forgetit:
+		RETURN
+.END

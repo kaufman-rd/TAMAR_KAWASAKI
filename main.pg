@@ -1,0 +1,81 @@
+.main
+	speed 30 always
+	height[1]=100
+	height[2]=200
+	height[3]=250
+	xratio =1
+	yratio=1
+	incr =1
+	num_of_obj=0
+
+	print "=================================================================="
+	print "===================   TAMAR PICK AND PLACE   ====================="
+	print "=================================================================="
+	lm pick_home
+	twait 1
+
+	start_cycle:
+	
+	print "================= taking picture ==============="
+	CALL read_cam
+	if num_of_obj == 0
+		print " ============= no objects found ==============="
+		goto no_objects
+	end
+	lm pick
+	print "arive at pick position"
+	twait 0.5
+	point pick1 = pick + trans(x*xratio,y*yratio,heigt[incr],o)
+	print "======== check for piston open ========"
+	lm pick1
+	print "======== picking object ========"
+	wait 0.5
+	print "======== closing piston ========"
+	twait 3
+	lm pick
+	;if incr == 1
+	;	lm over_small
+	;	print "======== placing small ========"
+	;	lm small
+	;	print "======== opening piston ========"
+	;	twait 3
+	;	lm over_small
+	;	lm pick_home
+	;end
+
+	case incr of
+		value 1
+			lm over_small
+			print "======== placing small ========"
+			lm small
+			print "======== opening piston ========"
+			twait 3
+			lm over_small
+			lm pick_home
+
+		value 2
+			lm over_medium
+			print "======== placing medium ========"
+			lm medium
+			print "======== opening piston ========"
+			twait 3
+			lm over_medium
+			lm pick_home
+
+		value 3	
+			lm over_large
+			print "======== placing large ========"
+			lm large
+			print "======== opening piston ========"
+			twait 3
+			lm over_large
+			lm pick_home
+	print "======== returning ========"
+	lm pick_home
+	goto start_cycle:
+
+	no_objects:
+	
+.end
+
+

@@ -1,0 +1,10 @@
+.program test1
+speed 5 always
+lm home
+twait 2
+lm grab
+twait 2
+lm home
+.end
+
+

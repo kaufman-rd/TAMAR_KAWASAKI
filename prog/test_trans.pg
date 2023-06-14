@@ -1,0 +1,13 @@
+.program test4
+point grab1
+speed 15 always
+lm home
+twait 2
+lm grab
+twait 2
+grab1= grab+TRANS(100,100)+RZ(300)
+wait sig (2001)
+lm home
+.end
+
+

@@ -1,0 +1,9 @@
+.program testtrans
+print "222"
+$s_b[1] = "111"
+n=1
+tcp_send ret,s_id,$s_b[1],n,60
+
+.end
+
+

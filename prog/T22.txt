@@ -1,0 +1,48 @@
+
+.PROGRAM cognex()
+
+	;POINT FRAME1 is the part frame, where frame1 is calculated using
+	;the FRAME command: POINT FRAME1=FRAME(f.origin,f.x1,f.xy,f.origin)
+	;The coordinates are assumed to be received from the vision system in the part frame
+
+	$termchk=$CHR(13)+$CHR(10)
+	.ret1=-1
+	.ret1a=-1
+	.ret1a1=-1
+	.ret1b=-1
+	.ret1b1=-1
+	.ret1bc=-1
+	.ret2=-1
+	CALL tcp_open; sock_id1 = CAMERA
+	IF sock_id1<0 THEN
+		RETURN
+	END
+	
+	.PROGRAM tcp_open()
+	tout_open = 60
+	ip[1] = 192
+	ip[2] = 168
+	ip[3] = 0
+	ip[4] = 11
+	port = 23
+	.er_count = 0
+	connect:
+	TIMER (2) = 0
+	TCP_CONNECT sock_id1,port,ip[1],tout_open
+	IF sock_id1<0 THEN
+		IF .er_count>=5 THEN
+			PRINT "Client Communication with Cognex has failed"
+			GOTO forgetit
+		ELSE
+			.er_count = .er_count+1
+			PRINT "TCP_CONNECT error id = ",sock_id1," error count = ",.er_count
+			GOTO connect
+		END
+	ELSE
+		PRINT "TCP_CONNECT OK id = ",sock_id1," with timep = ",TIMER(2)
+	END
+	forgetit:
+		RETURN
+	.END
+	
+.END

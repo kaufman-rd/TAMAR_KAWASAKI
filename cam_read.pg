@@ -1,0 +1,168 @@
+
+
+.PROGRAM close_socket(); #106;Closing communication
+	  TCP_CLOSE ret,sock_id;Normal socket closure
+	  IF ret<0 THEN
+		PRINT "TCP_CLOSE error ERROE=(",ret," ) ",$ERROR(ret)
+		TCP_CLOSE ret1,sock_id;Forced closure of socket (shutdown) 
+		IF ret1<0 THEN
+		  PRINT "TCP_CLOSE error id=",sock_id
+		END
+	  ELSE
+		PRINT "TCP_CLOSE OK id=",sock_id
+		socket_stat = 0
+	  END
+.END
+
+.PROGRAM read_cam(); #0;Communication main program
+	  socket_stat = 0
+	 
+	1000
+	  ret_rec=0
+	  ip[1] = 192
+	  ip[2] = 168
+	  ip[3] = 0
+	  ip[4] = 11
+	  port = 10000
+	  ;sock_id = 0
+	  
+	 
+	  
+	  ret = 0
+	  $trchk =$CHR(13)+$CHR(10)
+	  
+	  IF socket_stat==1 THEN
+		CALL close_socket
+	  END
+	  TWAIT 0.2
+	  CALL open_socket;Connecting communication
+	   
+        $size[0]="GVC033"
+		$size[1]="GVC033"
+		$size[2]="GVC043"
+		$size[3]="GVC053"
+		incr=1
+		
+		CALL recv;Receiving instruction data from PC
+		print "rec1 over"
+		
+		TWAIT 0.1
+		.$str="admin"+$CHR(13)+$CHR(10)
+		CALL send(.$str)
+		
+		TWAIT 0.1
+		CALL recv
+		
+		TWAIT 0.1
+		.$str=$CHR(13)+$CHR(10)
+		CALL send(.$str)
+		
+		TWAIT 0.1
+		CALL recv
+		
+		
+		; take a new picture :
+		.$str="SE0"+$CHR(13)+$CHR(10)
+		CALL send(.$str)
+		
+		TWAIT 0.5
+		CALL recv
+
+    start_read:
+		TWAIT 0.1
+		.$str=$size[incr]+$CHR(13)+$CHR(10)
+		CALL send(.$str)
+		
+		TWAIT 0.1
+		CALL recv
+		TWAIT 0.1
+		if ret_rec <0 goto quit
+		print "received data:" + $receive
+		$response= $receive
+		$ok = $decode($response,$trchk,0)
+		ok = VAL($ok)
+		print "OK is: ",$ok
+		if ok<>1 goto quit
+		if LEN($response) < 10 
+			print "===============  no object =============  SIZE:",incr 
+			incr = incr+1
+			if incr < 3 
+				goto start_read
+			else 
+				print " ================  finished ======================"
+				goto quit
+			end
+		end
+		num_of_obj= num_of_obj+1
+		$response= $RIGHT($response, LEN($response)-2)
+		$response= $LEFT($response, LEN($response)-3)
+		$x = $DECODE($response,",",0)
+		x= VAL($X)
+		$temp = $DECODE($response,",",1)
+		$y = $DECODE($response,",",0)
+		y= VAL($y)
+		$temp = $DECODE($response,",",1)
+		o = VAL($response)
+		print "=========================================="
+		print "x:",x,"   y:",y,"    o:",o
+		print "=========================================="
+		quit:
+		CALL close_socket
+	  
+	  
+	  
+.END
+
+.PROGRAM open_socket(); #475;Starting communication
+	.er_count = 0
+	connect:
+	  TCP_CONNECT sock_id,port,ip[1],tout
+	  IF sock_id<0 THEN
+		IF .er_count>=5 THEN
+		  PRINT "Connection with PC failed. Program is stopped."
+		ELSE
+		  .er_count = .er_count+1
+		  PRINT "TCP_CONNECT error id=",sock_id,"  error count=",.er_count
+		  GOTO connect
+		END
+	  ELSE
+		PRINT "TCP_CONNECT OK id=",sock_id
+		socket_stat = 1
+	  END
+.END
+
+.PROGRAM send(.$stri);
+	send:
+		$send_b[1]= .$stri
+		.b_n=1
+		tout=60
+		tcp_send ret11,sock_id,$send_b[1],.b_n,tout
+		if ret11 <0
+			print "sens error"
+		else
+			print "send good"
+		end
+		
+.end
+
+
+.PROGRAM recv(); #1848814;Communication Receiving data
+	recv:
+	  .num = 4
+	  TCP_RECV ret,sock_id,$recv_buf[1],.num,tout,255
+	  IF ret<0 THEN
+		PRINT "TCP_RECV error in RECV",ret
+		$recv_buf[1] = "000"
+		ret_rec=-1
+	  ELSE
+		ret_rec=1
+		IF .num>0 THEN
+		  PRINT "TCP_RECV OK  in RECV",ret
+		  PRINT "RECEIVED: ",$recv_buf[1]
+		  $receive = $recv_buf[1]
+		  
+		ELSE
+		  $recv_buf[1] = "000"
+		END
+	  END
+.END

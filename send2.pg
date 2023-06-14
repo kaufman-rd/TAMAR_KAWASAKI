@@ -1,0 +1,3 @@
+.program tcpsend
+tout = 60
+.end

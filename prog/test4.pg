@@ -1,0 +1,11 @@
+.program test4
+speed 15 always
+lm home
+twait 2
+lm grab
+twait 2
+wait sig (2001)
+lm home
+.end
+
+

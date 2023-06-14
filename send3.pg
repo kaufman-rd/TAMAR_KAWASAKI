@@ -1,0 +1,3 @@
+.program tcp1send
+speed 30 always
+.end

@@ -1,0 +1,23 @@
+.program testtrans
+speed 30 always
+lm pick_home
+twait 1
+lm pick
+twait 1
+CALL main
+
+point pick1 = pick + trans(x*20,y*20,,o)
+
+lm pick1
+wait 1
+wait sig (2001)
+lm pick
+wait 1
+point pick1 = pick + trans(-400,200,400)
+
+lm pick1
+wait 1
+lm pick_home
+.end
+
+
