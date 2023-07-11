@@ -4,7 +4,9 @@ lm pick_home
 twait 1
 lm pick
 twait 1
-point pick1 = pick + trans(400,100,400)
+CALL main
+
+point pick1 = pick + trans(x*20,y*20,,o)
 
 lm pick1
 wait 1

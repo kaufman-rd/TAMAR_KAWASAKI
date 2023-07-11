@@ -1,0 +1,137 @@
+.program main_vs()
+
+	
+	speed 30 always
+	height[1]=100
+	height[2]=200
+	height[3]=250
+	offsetX[1]=110
+	offsetY[1]=55
+	xratio =-1
+	yratio=1
+	incr =1
+	num_of_obj=0
+    xratio=1
+    yratio=-1
+    point pick_home =   trans(12.4,1830,2068,-180,90,0)
+    point pick =        trans(12.4,1830,1477,-76,180,103)
+    point over_small =  trans(-1400,1500,800,149,180,-30)
+    point small =       trans(-1400,1500,170,149,180,-30)
+    point over_medium = trans(900,1500,800,149,180,+30)
+    point medium =      trans(900,1500,170,149,180,+30)
+    ;=====================================================================
+	 socket_stat = 0
+	1000
+	  ret_rec=0
+	  ip[1] = 192
+	  ip[2] = 168
+	  ip[3] = 0
+	  ip[4] = 11
+	  port = 10000
+	  ret = 0
+	  $trchk =$CHR(13)+$CHR(10)
+	  
+	  IF socket_stat==1 THEN
+		CALL close_socket
+	  END
+	  TWAIT 0.2
+	  print "START"
+	  CALL open_socket;Connecting communication
+        $size[1]="GVC021"
+		$size[2]="GVC026"
+		$size[3]="GVC043"
+		$size[4]="GVC053"
+		incr=1
+		CALL recv;Receiving instruction data from PC
+		print "rec1 over"
+		TWAIT 0.1
+		.$str="admin"+$CHR(13)+$CHR(10)
+		CALL send(.$str)
+		TWAIT 0.1
+		CALL recv
+		TWAIT 0.1
+		.$str=$CHR(13)+$CHR(10)
+		CALL send(.$str)
+		TWAIT 0.1
+		CALL recv
+		print "===============online mode=================="
+		.$str="So1"+$CHR(13)+$CHR(10)
+		CALL send(.$str)
+		TWAIT 0.1
+		print "answer from online:"
+		CALL recv
+		;=========================================================================
+	print "=================================================================="
+	print "===================   TAMAR PICK AND PLACE   ====================="
+	print "=================================================================="
+	lm pick_home
+	twait 1
+	start_cycle:
+	print "================= taking picture ==============="
+	CALL read_cam
+	if num_of_obj == 0
+		print " ============= no objects found ==============="
+		goto no_objects
+	end
+	lm pick
+	print "arive at pick position"
+	sig 1
+	twait 0.5
+    point above_pick = pick + trans((-x),(y),1200,0,0,-o)
+	print "======== check for piston open ========"
+	WHILE sig(-1001)
+	END
+	print "======== piston opened ========"
+	lm above_pick
+	point pick_offset = above_pick + trans(-30)
+	lm pick_offset
+	twait 3
+	point picking = pick_offset + trans(0,0,100)
+	lm picking
+	
+	
+	print "======== picking object ========"
+	
+	print "======== closing piston ========"
+	sig -1
+	twait 2
+	lm pick_offset
+print "=========================  unpacking:" ,incr
+	case incr of
+		value 1
+			lm over_small
+			print "======== placing small ========"
+			lm small
+			print "======== opening piston ========"
+			sig 1
+			WHILE sig(-1001)
+			END
+			lm over_small    
+		value 2
+			lm over_medium
+			print "======== placing medium ========"
+			lm medium
+			print "======== opening piston ========"
+			twait 3
+			lm over_medium
+		value 3	
+			lm over_large
+			print "======== placing large ========"
+			lm large
+			print "======== opening piston ========"
+			twait 3
+			lm over_large
+        END
+	print "======== returning ========"
+	twait 1
+	lm pick_home
+	twait 1
+	;goto no_objects
+	goto start_cycle
+
+	no_objects:
+	CALL close_socket
+	
+.end
+
+

@@ -1,4 +1,4 @@
-.main()
+.program main_vs()
 	speed 30 always
 	height[1]=100
 	height[2]=200
@@ -7,15 +7,21 @@
 	yratio=1
 	incr =1
 	num_of_obj=0
-
+    xratio=0.1
+    yratio=0.1
+    point pick_home =   trans(200,2000,1400,149,180,0)
+    point pick =        trans(200,2000,500,149,180,0)
+    point over_small =  trans(-700,2000,500,149,180,-30)
+    point small =       trans(-700,2000,400,149,180,-30)
+    point over_medium = trans(900,1500,500,149,180,+30)
+    point medium =      trans(900,1500,400,149,180,+30)
+    
 	print "=================================================================="
 	print "===================   TAMAR PICK AND PLACE   ====================="
 	print "=================================================================="
 	lm pick_home
 	twait 1
-
 	start_cycle:
-	
 	print "================= taking picture ==============="
 	CALL read_cam
 	if num_of_obj == 0
@@ -25,24 +31,14 @@
 	lm pick
 	print "arive at pick position"
 	twait 0.5
-	point pick1 = pick + trans(x*xratio,y*yratio,heigt[incr],o)
+    point pick1 = pick + trans(x*xratio,y*yratio,height[incr],o)
 	print "======== check for piston open ========"
 	lm pick1
 	print "======== picking object ========"
-	wait 0.5
+	;wait 0.5
 	print "======== closing piston ========"
-	twait 3
-	lm pick
-	;if incr == 1
-	;	lm over_small
-	;	print "======== placing small ========"
-	;	lm small
-	;	print "======== opening piston ========"
-	;	twait 3
-	;	lm over_small
-	;	lm pick_home
-	;end
-
+	twait 0.5
+print "=========================  unpacking:" ,incr
 	case incr of
 		value 1
 			lm over_small
@@ -50,8 +46,7 @@
 			lm small
 			print "======== opening piston ========"
 			twait 3
-			lm over_small
-
+			lm over_small    
 		value 2
 			lm over_medium
 			print "======== placing medium ========"
@@ -59,7 +54,6 @@
 			print "======== opening piston ========"
 			twait 3
 			lm over_medium
-
 		value 3	
 			lm over_large
 			print "======== placing large ========"
@@ -67,10 +61,10 @@
 			print "======== opening piston ========"
 			twait 3
 			lm over_large
-			
+        END
 	print "======== returning ========"
 	lm pick_home
-	goto start_cycle:
+	goto start_cycle
 
 	no_objects:
 	

@@ -116,7 +116,7 @@
 		IF .num>0 THEN
 		  PRINT "TCP_RECV OK  in RECV",ret
 		  PRINT "RECEIVED: ",$recv_buf[1]
-		  CALL decompose
+		  ;CALL decompose
 		ELSE
 		  $recv_buf[1] = "000"
 		END

@@ -15,7 +15,58 @@
 .END
 
 .PROGRAM read_cam(); #0;Communication main program
+	  socket_stat = 0
 	 
+	1000
+	  ret_rec=0
+	  ip[1] = 192
+	  ip[2] = 168
+	  ip[3] = 0
+	  ip[4] = 11
+	  port = 10000
+	  ;sock_id = 0
+	  
+	   
+	  
+	  ret = 0
+	  $trchk =$CHR(13)+$CHR(10)
+	  
+	  IF socket_stat==1 THEN
+		CALL close_socket
+	  END
+	  TWAIT 0.2
+	  CALL open_socket;Connecting communication
+	   
+        $size[1]="GVC021"
+		$size[2]="GVC026"
+		$size[3]="GVC043"
+		$size[4]="GVC053"
+		incr=1
+		
+		CALL recv;Receiving instruction data from PC
+		print "rec1 over"
+		
+		TWAIT 0.1
+		.$str="admin"+$CHR(13)+$CHR(10)
+		CALL send(.$str)
+		
+		TWAIT 0.1
+		CALL recv
+		
+		TWAIT 0.1
+		.$str=$CHR(13)+$CHR(10)
+		CALL send(.$str)
+		
+		TWAIT 0.1
+		CALL recv
+		
+		print "===============online mode=================="
+		
+		.$str="So1"+$CHR(13)+$CHR(10)
+		CALL send(.$str)
+		TWAIT 0.5
+		print "answer from online:"
+		CALL recv
 
 		print "===============taking picture=============="
 		
@@ -66,7 +117,7 @@
 		print "x:",x,"   y:",y,"    o:",o
 		print "=========================================="
 		quit:
-		
+		CALL close_socket
 	  
 	  
 	  
