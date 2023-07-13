@@ -44,7 +44,7 @@
 		if LEN($response) < 10 
 			print "===============  no object =============  SIZE:",incr 
 			incr = incr+1
-			if incr < 3 
+			if incr < 4 
 				goto start_read
 			else 
 				print " ================  finished ======================"

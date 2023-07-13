@@ -1,24 +1,27 @@
 .program main_vs()
-
+print "13/7/23"
 	
-	speed 30 always
+	speed 60 always
 	height[1]=100
 	height[2]=200
 	height[3]=250
-	offsetX[1]=110
-	offsetY[1]=55
+	offsetX[1]=40
+	offsetX[2]=20
+	offsetX[3]=0
+	offsetX[4]=0
+	
 	xratio =-1
 	yratio=1
 	incr =1
 	num_of_obj=0
     xratio=1
     yratio=-1
-    point pick_home =   trans(12.4,1830,2068,-180,90,0)
-    point pick =        trans(12.4,1830,1477,-76,180,103)
-    point over_small =  trans(-1400,1500,800,149,180,-30)
-    point small =       trans(-1400,1500,170,149,180,-30)
-    point over_medium = trans(900,1500,800,149,180,+30)
-    point medium =      trans(900,1500,170,149,180,+30)
+   ; point pick_home =   trans(12.4,1830,2068,-180,90,0)
+    ;point pick =        trans(12.4,1830,1477,-76,180,103)
+   ; point over_small =  trans(1000,2200,800)
+    ;point small =       trans(1000,2200,170)
+    ;point over_medium = trans(1300,1420,800)
+    ;point medium =      trans(1300,1420,170)
     ;=====================================================================
 	 socket_stat = 0
 	1000
@@ -39,7 +42,7 @@
 	  CALL open_socket;Connecting communication
         $size[1]="GVC021"
 		$size[2]="GVC026"
-		$size[3]="GVC043"
+		$size[3]="GVJ016"
 		$size[4]="GVC053"
 		incr=1
 		CALL recv;Receiving instruction data from PC
@@ -65,7 +68,7 @@
 	print "===================   TAMAR PICK AND PLACE   ====================="
 	print "=================================================================="
 	lm pick_home
-	twait 1
+	twait 0.1
 	start_cycle:
 	print "================= taking picture ==============="
 	CALL read_cam
@@ -77,15 +80,21 @@
 	print "arive at pick position"
 	sig 1
 	twait 0.5
+	IF o > 90
+		o= o - 180
+	END
+	
+
     point above_pick = pick + trans((-x),(y),1200,0,0,-o)
 	print "======== check for piston open ========"
 	WHILE sig(-1001)
 	END
-	print "======== piston opened ========"
+	print "======== piston opened to size: ========"
+	print incr
 	lm above_pick
-	point pick_offset = above_pick + trans(-30)
+	point pick_offset = above_pick + trans(-offsetX[incr])
 	lm pick_offset
-	twait 3
+	twait 0.1
 	point picking = pick_offset + trans(0,0,100)
 	lm picking
 	
@@ -95,7 +104,8 @@
 	print "======== closing piston ========"
 	sig -1
 	twait 2
-	lm pick_offset
+	point pick_offset_up = pick_offset + trans(0,0,-200)
+	lm pick_offset_up
 print "=========================  unpacking:" ,incr
 	case incr of
 		value 1
@@ -112,20 +122,24 @@ print "=========================  unpacking:" ,incr
 			print "======== placing medium ========"
 			lm medium
 			print "======== opening piston ========"
-			twait 3
+			sig 1
+			WHILE sig(-1001)
+			END
 			lm over_medium
 		value 3	
 			lm over_large
 			print "======== placing large ========"
 			lm large
 			print "======== opening piston ========"
-			twait 3
+			sig 1
+			WHILE sig(-1001)
+			END
 			lm over_large
         END
 	print "======== returning ========"
-	twait 1
+	twait 0.2
 	lm pick_home
-	twait 1
+	twait 0.2
 	;goto no_objects
 	goto start_cycle
 
