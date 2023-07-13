@@ -1,5 +1,3 @@
-
-
 .PROGRAM close_socket(); #106;Closing communication
 	  TCP_CLOSE ret,sock_id;Normal socket closure
 	  IF ret<0 THEN
@@ -13,24 +11,17 @@
 		socket_stat = 0
 	  END
 .END
-
 .PROGRAM read_cam(); #0;Communication main program
-	 
-
-		print "===============taking picture=============="
-		
+	 	print "===============taking picture=============="
 		.$str="SW8"+$CHR(13)+$CHR(10)
 		CALL send(.$str)
-		
 		TWAIT 0.5
 		print "answer from picture:"
 		CALL recv
-
     start_read:
 		TWAIT 0.1
 		.$str=$size[incr]+$CHR(13)+$CHR(10)
 		CALL send(.$str)
-		
 		TWAIT 0.1
 		CALL recv
 		TWAIT 0.1
@@ -66,12 +57,7 @@
 		print "x:",x,"   y:",y,"    o:",o
 		print "=========================================="
 		quit:
-		
-	  
-	  
-	  
 .END
-
 .PROGRAM open_socket(); #475;Starting communication
 	.er_count = 0
 	connect:
@@ -89,7 +75,6 @@
 		socket_stat = 1
 	  END
 .END
-
 .PROGRAM send(.$stri);
 	send:
 		$send_b[1]= .$stri
