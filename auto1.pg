@@ -1,0 +1,16 @@
+.program autostart.pc()
+	wait 5
+    print "13/7/23"
+    wait switch (power)
+	print "wait for start signal"
+	CALL main_vs
+	wait 2004
+    ;pcab
+    ;pckill
+
+    ;pcab 2:
+    ;pckill 2:
+	
+.end
+
+

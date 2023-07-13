@@ -1,0 +1,11 @@
+.program autostart2.pc()
+	print "13/7/23"
+    wait switch (power)
+	print "wait for start signal"
+	
+	CALL main_vs
+	
+	
+.end
+
+

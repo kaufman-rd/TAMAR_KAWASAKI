@@ -1,9 +1,8 @@
-.program main_vs()
-	wait switch(power)
+.program autostart.pc()
+	print "13/7/23"
 	main_loop:
 	print "wait for start signal"
 	wait sig (2002)
-	print "13/7/23"
 	sig -2002
 	speed 60 always
 	height[1]=100

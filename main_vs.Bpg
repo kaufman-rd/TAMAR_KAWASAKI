@@ -1,15 +1,11 @@
 .program main_vs()
-	wait switch(power)
-	main_loop:
-	print "wait for start signal"
-	wait sig (2002)
-	print "13/7/23"
-	sig -2002
+print "13/7/23"
+	
 	speed 60 always
 	height[1]=100
 	height[2]=200
 	height[3]=250
-	offsetX[1]=30
+	offsetX[1]=40
 	offsetX[2]=20
 	offsetX[3]=0
 	offsetX[4]=50
@@ -47,7 +43,7 @@
         $size[1]="GVC021"
 		$size[2]="GVC026"
 		$size[3]="GVJ016"
-		$size[4]="GVJ021"
+		$size[4]="GVJ020"
 		incr=1
 		CALL recv;Receiving instruction data from PC
 		print "rec1 over"
@@ -139,15 +135,6 @@ print "=========================  unpacking:" ,incr
 			WHILE sig(-1001)
 			END
 			lm over_large
-		value 4	
-			lm over_tiny
-			print "======== placing tiny ========"
-			lm tiny
-			print "======== opening piston ========"
-			sig 1
-			WHILE sig(-1001)
-			END
-			lm over_tiny
         END
 	print "======== returning ========"
 	twait 0.2
@@ -158,7 +145,6 @@ print "=========================  unpacking:" ,incr
 
 	no_objects:
 	CALL close_socket
-	goto main_loop
 	
 .end
 
